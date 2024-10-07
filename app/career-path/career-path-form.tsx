@@ -90,7 +90,7 @@ export default function CareerPathForm({
       {guessHistory.length > 0 && (
         <div className="mt-4 p-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold border-4 bg-primary">
           <h2 className="text-xl font-bold">Guess History</h2>
-          <ul className="list-disc list-inside">
+          <ul className="list-disc text-black list-inside">
             {guessHistory.map((guess, index) => (
               <li key={index}>{guess}</li>
             ))}
@@ -104,7 +104,7 @@ export default function CareerPathForm({
       )}
       {result?.message && (
         <div
-          className={`mt-4 p-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold border-4 ${
+          className={`mt-4 p-4 text-black border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold border-4 ${
             result.isCorrect ? "bg-green-200" : "bg-red-200"
           }`}
         >
