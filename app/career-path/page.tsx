@@ -37,17 +37,22 @@ async function getRandomPlayer(): Promise<Tables<"career_path"> | null> {
 async function getPlayerData(
   playerName: string,
   wikiId: string
-): Promise<PlayerData> {
+): Promise<PlayerData | null> {
   const host = headers().get("host");
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-  const response = await fetch(
-    `${protocol}://${host}/api/career-path?name=${encodeURIComponent(playerName)}&wikiId=${encodeURIComponent(wikiId)}`,
-    { cache: "no-store" }
-  );
-  if (!response.ok) {
-    throw new Error("Failed to fetch player data");
+  try {
+    const response = await fetch(
+      `${protocol}://${host}/api/career-path?name=${encodeURIComponent(playerName)}&wikiId=${encodeURIComponent(wikiId)}`,
+      { cache: "no-store" }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch player data");
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching player data:", error);
+    return null;
   }
-  return response.json();
 }
 
 const formSchema = z.object({
@@ -92,7 +97,7 @@ async function handlePlayerSubmit(formData: FormData) {
   };
 }
 
-async function CareerPathContent() {
+export default async function CareerPath() {
   const randomPlayer = await getRandomPlayer();
 
   if (!randomPlayer) {
@@ -104,32 +109,10 @@ async function CareerPathContent() {
     randomPlayer.wiki_id
   );
 
-  return (
-    <>
-      <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full p-4 sm:p-8">
-        <div className="mb-8 p-4 bg-bg border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <h1 className="text-2xl sm:text-3xl text-center font-bold text-black">
-            Guess the player from their career path
-          </h1>
-        </div>
-        <CareerPathForm
-          randomPlayer={randomPlayer}
-          playerData={playerData}
-          handlePlayerSubmit={handlePlayerSubmit}
-        />
-      </div>
-      <p>
-        Data is sourced from a very difficult to work with Wikimedia. If there
-        are any clubs missing,{" "}
-        <Link className="underline" href={"/"}>
-          please report this question
-        </Link>
-      </p>
-    </>
-  );
-}
+  if (!playerData) {
+    return <div>Failed to fetch player data. Please try again.</div>;
+  }
 
-export default function CareerPath() {
   return (
     <div className="p-4 bg-primary">
       <div className="min-h-screen bg-primary p-4 gap-8 sm:p-8 flex flex-col items-center justify-center">
@@ -154,9 +137,29 @@ export default function CareerPath() {
               Sign up
             </Link>
           </Card>
-          <CareerPathContent />
+          <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full p-4 sm:p-8">
+            <div className="mb-8 p-4 bg-bg border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              <h1 className="text-2xl sm:text-3xl text-center font-bold text-black">
+                Guess the player from their career path
+              </h1>
+            </div>
+            <CareerPathForm
+              randomPlayer={randomPlayer}
+              playerData={playerData}
+              handlePlayerSubmit={handlePlayerSubmit}
+            />
+          </div>
+          <p>
+            Data is sourced from a very difficult to work with Wikimedia. If
+            there are any clubs missing,{" "}
+            <Link className="underline" href={"/"}>
+              please report this question
+            </Link>
+          </p>
         </Suspense>
       </div>
     </div>
   );
 }
+
+export const revalidate = 3600; // Revalidate every hour
