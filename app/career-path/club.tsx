@@ -7,7 +7,7 @@ import { ClubType } from "./career-path-form";
 export const Club = ({ club }: { club: ClubType }) => (
   <div
     className={cn(
-      "w-full bg-yellow text-sm min-h-10 md:text-lg md:min-h-6 p-2 border-4 border-black transition-all",
+      "w-full bg-yellow text-black text-sm min-h-10 md:text-lg md:min-h-6 p-2 border-4 border-black transition-all",
       "text-left font-bold flex gap-2 items-center border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]",
       club.isLoan ? "bg-bg" : ""
     )}
@@ -24,7 +24,7 @@ export const Club = ({ club }: { club: ClubType }) => (
 export const ObscuredClub = () => (
   <div
     className={cn(
-      "w-full bg-yellow text-sm min-h-10 md:text-lg md:min-h-6 p-2 border-4 border-black transition-all",
+      "w-full bg-yellow text-sm text-black min-h-10 md:text-lg md:min-h-6 p-2 border-4 border-black transition-all",
       "text-left font-bold flex gap-2 items-center border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]"
     )}
   >
