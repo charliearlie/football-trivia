@@ -46,6 +46,8 @@ export default function CareerPathForm({
     message?: string;
   } | null>(null);
 
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setGuessHistory([...guessHistory, event.currentTarget.guess.value]);
@@ -59,6 +61,9 @@ export default function CareerPathForm({
       setNumberOfClubsToDisplay(numberOfClubsToDisplay + 1);
     } else {
       setNumberOfClubsToDisplay(playerData.clubs.length);
+    }
+    if (inputRef.current) {
+      inputRef.current.value = "";
     }
 
     setResult(result);
@@ -117,6 +122,7 @@ export default function CareerPathForm({
           name="guess"
           placeholder="Enter the player's name"
           required
+          ref={inputRef}
         />
         <input type="hidden" name="playerId" value={randomPlayer.id} />
         <Button
